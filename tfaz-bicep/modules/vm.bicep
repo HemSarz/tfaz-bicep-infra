@@ -17,17 +17,16 @@ resource pipAddressResource 'Microsoft.Network/publicIPAddresses@2024-07-01' = {
   }
 }
 
-
 resource netIntResource 'Microsoft.Network/networkInterfaces@2024-07-01' = {
   name: '${vm.name}-nic'
-  tags:tags
+  tags: tags
   location: location
   properties: {
     ipConfigurations: [
       {
         name: 'ipconfig01'
         properties: {
-          subnet:{
+          subnet: {
             id: subnetId
           }
           privateIPAllocationMethod: 'Dynamic'
@@ -53,11 +52,12 @@ resource virtualMachineResource 'Microsoft.Compute/virtualMachines@2024-11-01' =
     storageProfile: {
       osDisk: {
         createOption: 'FromImage'
+        name: '${vm.name}-osdisk'
         managedDisk: {
           storageAccountType: 'Standard_LRS'
         }
       }
-      imageReference: vm.imageReferance
+      imageReference: vm.imageReference
     }
     networkProfile: {
       networkInterfaces: [
@@ -68,13 +68,13 @@ resource virtualMachineResource 'Microsoft.Compute/virtualMachines@2024-11-01' =
     }
     osProfile: {
       computerName: vm.name
-      adminUsername: vm.adminUserName
+      adminUsername: vm.adminUsername
       linuxConfiguration: {
         disablePasswordAuthentication: true
         ssh: {
           publicKeys: [
             {
-              path: '/home/${vm.adminUserName}/.ssh/autherized_keys'
+              path: '/home/${vm.adminUsername}/.ssh/authorized_keys'
               keyData: vm.sshPublicKey
             }
           ]

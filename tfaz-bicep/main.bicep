@@ -1,6 +1,6 @@
 targetScope = 'subscription'
 
-param resourceGroupNEParam string
+param resourceGroupNEParam object
 param tagsParam object
 param vnetParam object
 param vmParam object
@@ -28,3 +28,14 @@ module virtualNetwork 'modules/vnet.bicep' = {
   ]
 }
 
+module virtualMachine 'modules/vm.bicep' = {
+  name: '${deploymentNameParam}-virtual-machine'
+  scope: resourceGroup(resourceGroupNEParam.name)
+  params: {
+    location: resourceGroupNEParam.location
+    vm: vmParam
+    subnetId: virtualNetwork.outputs.subnetId
+    nsgId: virtualNetwork.outputs.nsgId
+    tags: tagsParam
+  }
+}
